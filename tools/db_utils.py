@@ -5,7 +5,7 @@ from psycopg2 import Error
 
 
 def execute_postgres_query(
-    query: str = "SELECT ipo.ipo_id, ipo.embedding FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY net_profit DESC, revenue DESC LIMIT 5;",
+    query: str = "SELECT ipo.ipo_id, ipo.name  FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY net_profit DESC, revenue DESC LIMIT 5;",
     host: str = "localhost",
     database: str = "POLYQUITY_DATA",
     user: str = "postgres",

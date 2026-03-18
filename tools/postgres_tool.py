@@ -1,9 +1,10 @@
 # Postgres Tool Module
 
 import ast
+import json
 from psycopg2 import Error
 import numpy as np
-from db_utils import execute_postgres_query
+from tools.db_utils import execute_postgres_query
 
 def wallet_has_transactions(
 	host: str,
@@ -82,26 +83,26 @@ def get_user_profile(wallet_address: str) -> dict:
 		# aggregate embeddings into single profile vector using mean
 		profile_vector = np.mean(embeddings, axis=0).tolist()
 
-		return {
+		return json.dumps({
 			"has_profile": True,
 			"profile_vector": profile_vector,
 			"purchased_ipo_ids": purchased_ipo_ids
-		}
+		})
 	except Error as e:
 		print(f"Database error in get_user_profile: {e}")
-		return {
+		return json.dumps({
 			"has_profile": False,
 			"profile_vector": None,
 			"purchased_ipo_ids": [],
 			"error": str(e)
-		}
+		})
 	
 
 
-
+'''
 # small example showing usage
 if __name__ == "__main__":
 	wallet_address = "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
 	result = get_user_profile(wallet_address)
 	print("Result:", result)
-
+'''
