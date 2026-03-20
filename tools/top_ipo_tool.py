@@ -41,5 +41,5 @@ def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transac
 
 
 # Example usage; remove or adapt for real code
-'''if __name__ == "__main__":
-    print(top_ipo_tool())'''
+if __name__ == "__main__":
+    print(top_ipo_tool())

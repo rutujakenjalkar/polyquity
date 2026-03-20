@@ -1,18 +1,66 @@
 # Recommendation Agent Module
 
-import os
-import json
-from dotenv import load_dotenv
-from langchain.hub import pull
-
-from langchain.agents import AgentExecutor, create_agent
-from langchain_groq import ChatGroq
-from langchain_core.tools import tool
-
 from tools.top_ipo_tool import top_ipo_tool
 from tools.postgres_tool import get_user_profile
+from tools.similarity_tool import similarity_tool
 
-result = top_ipo_tool()
-print(result)
-print(get_user_profile("0x1234567890abcdef1234567890abcdef12345678"))
-#print(AgentExecutor)
+import os
+from dotenv import load_dotenv
+from langchain_groq import ChatGroq
+from langchain.agents import create_agent
+from langchain_core.tools import tool
+from langchain_core.globals import set_debug
+set_debug(True)
+
+# 1. Load the Groq key from your .env
+load_dotenv()
+
+# 2. Define specialized Advisory tools
+@tool
+def get_user_profile_tool(wallet_address: str) -> str:
+    """Always call this tool first with the user's wallet address. 
+    Returns whether the user has investment history or not."""
+    return get_user_profile(wallet_address)
+
+@tool
+def get_top_ipos_tool(dummy: str = "run") -> str:
+    """Call this tool only when get_user_profile_tool returns has_profile as false.
+    Returns top 5 IPOs for new users with no investment history."""
+    return top_ipo_tool()
+
+@tool
+def get_similar_ipos_tool(postgres_tool_output: str) -> str:
+    """Call this tool when get_user_profile_tool returns has_profile as true.
+    Pass the entire output of get_user_profile_tool as input.
+    Returns top 5 similar IPOs based on user investment profile."""
+    return similarity_tool(postgres_tool_output)
+
+# 3. Initialize Groq (using Llama 3.1 for best tool-calling)
+# Updated for March 2026 standards
+llm = ChatGroq(
+    model="llama-3.3-70b-versatile", # Updated model ID
+    temperature=0,
+    groq_api_key=os.getenv("GROQ_API_KEY")
+)
+
+
+# 4. Create the Agent
+# This replaces the old create_react_agent pattern
+tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool]
+
+advisor_agent = create_agent(
+    model=llm,
+    tools=tools,
+    system_prompt="You are a Senior Financial Advisor. Be concise, professional, and always use tools for calculations."
+)
+
+# 5. Execute the Advisory Task
+user_query = "Give me IPO recommendations for wallet 0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+
+# The agent returns a dictionary containing the full message history
+response = advisor_agent.invoke({"messages": [("user", user_query)]})
+
+# Print only the final answer
+print(response["messages"][-1].content)
+print("done")
+

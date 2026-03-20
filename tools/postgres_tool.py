@@ -104,5 +104,5 @@ def get_user_profile(wallet_address: str) -> dict:
 if __name__ == "__main__":
 	wallet_address = "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
 	result = get_user_profile(wallet_address)
-	print("Result:", result)
+	print( result)
 '''
