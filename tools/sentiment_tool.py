@@ -113,8 +113,9 @@ def sentiment_tool(candidates_output: str) -> str:
 
 
 if __name__ == "__main__":
-    print("Testing sentiment_tool with top IPOs for a user profile...\n")
+    """print("Testing sentiment_tool with top IPOs for a user profile...\n")
     postgres_output = get_user_profile("0x2b3c4d5e6f7890abcdef1234567890abcdef1234")
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
-    print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
+    print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))"""
+    print("Testing sentiment_tool with top IPOs for new user...\n")
     
