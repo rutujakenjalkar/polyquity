@@ -81,16 +81,32 @@ advisor_agent = create_agent(
     system_prompt="You are a Senior Financial Advisor. Be concise, professional, and always use tools for calculations."
 )
 
-# 5. Execute the Advisory Task
-user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
-run_id = set_run_id()
-logger.info("Starting recommendation workflow for query: %s", user_query)
+if __name__ == "__main__":
+    
+    # 5. Execute the Advisory Task
+    user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
+    run_id = set_run_id()
+    logger.info("Starting recommendation workflow for query: %s", user_query)
 
-# The agent returns a dictionary containing the full message history
-response = advisor_agent.invoke({"messages": [("user", user_query)]})
-logger.info("Recommendation workflow completed")
+    # The agent returns a dictionary containing the full message history
+    response = advisor_agent.invoke({"messages": [("user", user_query)]})
+    logger.info("Recommendation workflow completed")
 
-# Print only the final answer
-print(response["messages"][-1].content)
-print("done")
+    # Print only the final answer from the agent (the last message in the history)
+    print(response["messages"][-1].content)
+    print("done")
 
+    conversation_history = response["messages"]  # full history incl. tool calls
+
+    print("\nType your follow-up questions (or 'exit' to quit):\n")
+    while True:
+        user_input = input("You: ").strip()
+        if not user_input:
+            continue
+        if user_input.lower() in ("exit", "quit"):
+            print("Goodbye!")
+            break
+        conversation_history.append(("user", user_input))
+        response = advisor_agent.invoke({"messages": conversation_history})
+        conversation_history = response["messages"]  # keep history growing
+        print(f"\nAdvisor: {response['messages'][-1].content}\n")
