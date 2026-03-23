@@ -20,6 +20,20 @@ logger = get_logger(__name__, "workflow.log")
 load_dotenv()
 
 # 2. Define specialized Advisory tools
+
+@tool
+def get_sentiment_scores_tool(candidates_input: str) -> str:
+    """Call this tool after get_similar_ipos_tool or get_top_ipos_tool.
+    Pass the entire output of either tool as input.
+    Fetches market news, scores sentiment using FinBERT and returns 
+    ordered candidates with composite scores."""
+    logger.info("Tool call started: get_sentiment_scores_tool")
+    result = sentiment_tool(candidates_input)
+    logger.info("Tool call completed: get_sentiment_scores_tool")
+    return result
+
+
+
 @tool
 def get_user_profile_tool(wallet_address: str) -> str:
     """Always call this tool first with the user's wallet address. 
@@ -59,7 +73,7 @@ llm = ChatGroq(
 
 # 4. Create the Agent
 # This replaces the old create_react_agent pattern
-tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool]
+tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool]
 
 advisor_agent = create_agent(
     model=llm,
@@ -68,7 +82,7 @@ advisor_agent = create_agent(
 )
 
 # 5. Execute the Advisory Task
-user_query = "Give me IPO recommendations for wallet 0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
 run_id = set_run_id()
 logger.info("Starting recommendation workflow for query: %s", user_query)
 

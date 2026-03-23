@@ -5,9 +5,9 @@ import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
 from cache import news_cache
-from tools.postgres_tool import get_user_profile
-from tools.similarity_tool import similarity_tool
-from tools.top_ipo_tool import top_ipo_tool
+from postgres_tool import get_user_profile
+from similarity_tool import similarity_tool
+from top_ipo_tool import top_ipo_tool
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:
@@ -81,7 +81,7 @@ def sentiment_tool(candidates_output: str) -> str:
 
             # Compute composite score
             knn_similarity = 1 - knn_distance
-            composite_score = round((0.7 * knn_similarity) + (0.3 * sentiment_score), 4)
+            composite_score = round((0.5*knn_similarity) + (0.5 * sentiment_score), 4)
             logger.debug(
                 "%s knn_similarity=%.4f composite_score=%.4f",
                 name,
