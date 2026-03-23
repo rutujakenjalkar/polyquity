@@ -5,9 +5,15 @@ import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
 from cache import news_cache
-from postgres_tool import get_user_profile
-from similarity_tool import similarity_tool
-from top_ipo_tool import top_ipo_tool
+from tools.postgres_tool import get_user_profile
+from tools.similarity_tool import similarity_tool
+from tools.top_ipo_tool import top_ipo_tool
+try:
+    from tools.logger_utils import get_logger, set_run_id
+except ImportError:
+    from logger_utils import get_logger, set_run_id
+
+logger = get_logger(__name__, "sentiment_tool.log")
 
 # Load FinBERT model once at startup
 finbert = pipeline(
@@ -23,6 +29,7 @@ def fetch_news(company_name: str) -> list:
     url = f"https://news.google.com/rss/search?q={query}+IPO&hl=en-IN&gl=IN&ceid=IN:en"
     feed = feedparser.parse(url)
     headlines = [entry.title for entry in feed.entries[:10]]
+    logger.debug("Fetched %d headlines for %s", len(headlines), company_name)
 
     return headlines
 
@@ -50,8 +57,10 @@ def sentiment_tool(candidates_output: str) -> str:
     fetches news, scores sentiment using FinBERT,
     computes composite score and returns ordered candidates."""
     try:
+        logger.info("Starting sentiment_tool")
         data = json.loads(candidates_output)
         candidates = data["candidates"]
+        logger.debug("Received %d candidates for sentiment scoring", len(candidates))
 
         scored_candidates = []
         for candidate in candidates:
@@ -64,19 +73,23 @@ def sentiment_tool(candidates_output: str) -> str:
 
             # Store in cache
             news_cache[name] = headlines
-            #print("\n",f"Fetched news for {name}: {headlines}","\n")
+            logger.debug("Stored %d headlines in cache for %s", len(headlines), name)
 
             # Compute sentiment score using FinBERT
             sentiment_score = compute_sentiment_score(headlines)
-            #print(f"{name} -> sentiment: {sentiment_score}")
+            logger.debug("%s sentiment score: %.4f", name, sentiment_score)
 
             # Compute composite score
             knn_similarity = 1 - knn_distance
             composite_score = round((0.7 * knn_similarity) + (0.3 * sentiment_score), 4)
-            #print(f"{name} -> knn_similarity: {knn_similarity}, composite_score: {composite_score}")
+            logger.debug(
+                "%s knn_similarity=%.4f composite_score=%.4f",
+                name,
+                knn_similarity,
+                composite_score,
+            )
 
             try:
-                #print("adding candidate")
                 scored_candidates.append({
                     "ipo_id": ipo_id,
                     "name": name,
@@ -84,10 +97,10 @@ def sentiment_tool(candidates_output: str) -> str:
                     "sentiment_score": sentiment_score,
                     "composite_score": composite_score
                 })
-                #print(scored_candidates)
+                logger.debug("Added scored candidate for %s", name)
 
             except Exception as e:
-                print(f"Error processing candidate {name}: {e}")
+                logger.exception("Error processing candidate %s", name)
                 continue
 
         # Sort by composite score descending
@@ -97,7 +110,7 @@ def sentiment_tool(candidates_output: str) -> str:
         for i, candidate in enumerate(scored_candidates):
             candidate["rank"] = i + 1
 
-        #print("\n","Final scored candidates:", scored_candidates,"\n")
+        logger.info("Completed sentiment scoring for %d candidates", len(scored_candidates))
 
         return json.dumps({
             "success": True,
@@ -105,6 +118,7 @@ def sentiment_tool(candidates_output: str) -> str:
         })
 
     except Exception as e:
+        logger.exception("sentiment_tool failed")
         return json.dumps({
             "success": False,
             "candidates": [],
@@ -113,9 +127,10 @@ def sentiment_tool(candidates_output: str) -> str:
 
 
 if __name__ == "__main__":
-    """print("Testing sentiment_tool with top IPOs for a user profile...\n")
+    set_run_id()
+    print("Testing sentiment_tool with top IPOs for a user profile...\n")
     postgres_output = get_user_profile("0x2b3c4d5e6f7890abcdef1234567890abcdef1234")
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
-    print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))"""
+    print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
     

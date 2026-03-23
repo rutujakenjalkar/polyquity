@@ -3,11 +3,17 @@
 import json
 import numpy as np
 import ast
-#from tools.postgres_tool import get_user_profile
-#from tools.db_utils import execute_postgres_query
+from tools.postgres_tool import get_user_profile
+from tools.db_utils import execute_postgres_query
 
-from postgres_tool import get_user_profile
-from db_utils import execute_postgres_query
+#from postgres_tool import get_user_profile
+#from db_utils import execute_postgres_query
+try:
+    from tools.logger_utils import get_logger, set_run_id
+except ImportError:
+    from logger_utils import get_logger, set_run_id
+
+logger = get_logger(__name__, "similarity_tool.log")
 
 
 
@@ -31,15 +37,18 @@ def similarity_tool(postgres_tool_output:str) -> str:
 
 
     try:
+        logger.info("Starting similarity_tool")
         data = json.loads(postgres_tool_output)
         profile_vector = data["profile_vector"]
         purchased_ipo_ids = tuple(data["purchased_ipo_ids"])
+        logger.debug("Received %d purchased IPO ids", len(purchased_ipo_ids))
 
         #print("Profile Vector:", profile_vector)
 
         required_tuples= execute_postgres_query(
         query="SELECT ipo_id, name, embedding FROM ipo WHERE ipo_id NOT IN %s;",
         params=(tuple(purchased_ipo_ids),))
+        logger.debug("Fetched %d IPO rows for similarity comparison", len(required_tuples))
 
 
         distances = []
@@ -54,6 +63,7 @@ def similarity_tool(postgres_tool_output:str) -> str:
 
             #case when the the vector is zero
             if all(v == 0 for v in embedding):
+                logger.debug("Skipping IPO %s because embedding is zero vector", name)
                 continue  # Skip this IPO if the embedding is a zero vector because why would domeone invest in an ipo with zero vector embedding or smallest financial embeddings
             
             distnance = cosine_distance(profile_vector, embedding)
@@ -65,6 +75,7 @@ def similarity_tool(postgres_tool_output:str) -> str:
         # Sort by distance and get bottom 5 (most similar)
         distances.sort(key=lambda x: x[2])  
         top_5 = distances[:5]
+        logger.info("Computed top %d similar IPO candidates", len(top_5))
         #print("Top 5 Similar IPOs:", top_5)
 
         return json.dumps({
@@ -80,6 +91,7 @@ def similarity_tool(postgres_tool_output:str) -> str:
                 ]
             })
     except Exception as e:
+            logger.exception("similarity_tool failed")
             return json.dumps({
                     "success": False,
                     "source": "knn",
@@ -93,5 +105,6 @@ def similarity_tool(postgres_tool_output:str) -> str:
 
 
 if __name__ == "__main__":
+    set_run_id()
     postgres_output = get_user_profile("0x2b3c4d5e6f7890abcdef1234567890abcdef1234")
     print(similarity_tool(postgres_output))

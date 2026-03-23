@@ -3,6 +3,8 @@
 from tools.top_ipo_tool import top_ipo_tool
 from tools.postgres_tool import get_user_profile
 from tools.similarity_tool import similarity_tool
+from tools.logger_utils import get_logger, set_run_id
+from tools.sentiment_tool import sentiment_tool
 
 import os
 from dotenv import load_dotenv
@@ -10,7 +12,9 @@ from langchain_groq import ChatGroq
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langchain_core.globals import set_debug
-set_debug(True)
+set_debug(False)
+
+logger = get_logger(__name__, "workflow.log")
 
 # 1. Load the Groq key from your .env
 load_dotenv()
@@ -20,20 +24,29 @@ load_dotenv()
 def get_user_profile_tool(wallet_address: str) -> str:
     """Always call this tool first with the user's wallet address. 
     Returns whether the user has investment history or not."""
-    return get_user_profile(wallet_address)
+    logger.info("Tool call started: get_user_profile_tool")
+    result = get_user_profile(wallet_address)
+    logger.info("Tool call completed: get_user_profile_tool")
+    return result
 
 @tool
 def get_top_ipos_tool(dummy: str = "run") -> str:
     """Call this tool only when get_user_profile_tool returns has_profile as false.
     Returns top 5 IPOs for new users with no investment history."""
-    return top_ipo_tool()
+    logger.info("Tool call started: get_top_ipos_tool")
+    result = top_ipo_tool()
+    logger.info("Tool call completed: get_top_ipos_tool")
+    return result
 
 @tool
 def get_similar_ipos_tool(postgres_tool_output: str) -> str:
     """Call this tool when get_user_profile_tool returns has_profile as true.
     Pass the entire output of get_user_profile_tool as input.
     Returns top 5 similar IPOs based on user investment profile."""
-    return similarity_tool(postgres_tool_output)
+    logger.info("Tool call started: get_similar_ipos_tool")
+    result = similarity_tool(postgres_tool_output)
+    logger.info("Tool call completed: get_similar_ipos_tool")
+    return result
 
 # 3. Initialize Groq (using Llama 3.1 for best tool-calling)
 # Updated for March 2026 standards
@@ -56,9 +69,12 @@ advisor_agent = create_agent(
 
 # 5. Execute the Advisory Task
 user_query = "Give me IPO recommendations for wallet 0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+run_id = set_run_id()
+logger.info("Starting recommendation workflow for query: %s", user_query)
 
 # The agent returns a dictionary containing the full message history
 response = advisor_agent.invoke({"messages": [("user", user_query)]})
+logger.info("Recommendation workflow completed")
 
 # Print only the final answer
 print(response["messages"][-1].content)
