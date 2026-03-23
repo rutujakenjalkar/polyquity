@@ -4,7 +4,8 @@ import ast
 import json
 from psycopg2 import Error
 import numpy as np
-from tools.db_utils import execute_postgres_query
+#from tools.db_utils import execute_postgres_query
+from db_utils import execute_postgres_query
 
 def wallet_has_transactions(
 	host: str,
@@ -99,10 +100,10 @@ def get_user_profile(wallet_address: str) -> dict:
 	
 
 
-'''
+
 # small example showing usage
 if __name__ == "__main__":
-	wallet_address = "0x1a2b3c4d5e6f7890abcdef1234567890abcdef12"
+	wallet_address = "0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
 	result = get_user_profile(wallet_address)
 	print( result)
-'''
+

@@ -1,8 +1,9 @@
 # Top IPO Tool Module
 
 from psycopg2 import Error
-from tools.db_utils import execute_postgres_query
+#from tools.db_utils import execute_postgres_query
 import json
+from db_utils import execute_postgres_query
 
 
 def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY net_profit DESC, revenue DESC LIMIT 5;") -> dict:
