@@ -1,7 +1,7 @@
 from cache import news_cache
 import json
 
-from tools.cache import news_cache
+from cache import news_cache
 
 try:
     from tools.logger_utils import get_logger, set_run_id

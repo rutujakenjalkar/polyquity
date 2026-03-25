@@ -84,7 +84,7 @@ advisor_agent = create_agent(
 if __name__ == "__main__":
     
     # 5. Execute the Advisory Task
-    user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
+    user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1235"
     run_id = set_run_id()
     logger.info("Starting recommendation workflow for query: %s", user_query)
 

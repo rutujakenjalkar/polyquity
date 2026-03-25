@@ -1,1 +1,1 @@
-news_cache={"Ola Electric": ["Rutuja's cached news headlines for Ola Electric"]}
+news_cache={}
