@@ -3,11 +3,14 @@
 import json
 import numpy as np
 import ast
-#from tools.postgres_tool import get_user_profile
-#from tools.db_utils import execute_postgres_query
+from tools.postgres_tool import get_user_profile
+from tools.db_utils import execute_postgres_query
 
+
+'''
 from postgres_tool import get_user_profile
 from db_utils import execute_postgres_query
+'''
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:
@@ -103,8 +106,9 @@ def similarity_tool(postgres_tool_output:str) -> str:
 
 
 
-
+'''
 if __name__ == "__main__":
     set_run_id()
     postgres_output = get_user_profile("0x2b3c4d5e6f7890abcdef1234567890abcdef1234")
     print(similarity_tool(postgres_output))
+'''

@@ -12,6 +12,7 @@ from langchain_groq import ChatGroq
 from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langchain_core.globals import set_debug
+from tools.prospectus_tool import get_prospectus_answer
 set_debug(False)
 
 logger = get_logger(__name__, "workflow.log")
@@ -20,6 +21,18 @@ logger = get_logger(__name__, "workflow.log")
 load_dotenv()
 
 # 2. Define specialized Advisory tools
+
+@tool
+def get_prospectus_info_tool(query: str) -> str:
+    """Use this tool when the user asks questions about a specific IPO company's 
+    prospectus document. For example: risk factors, business model, promoters, 
+    financial details, objects of the issue, lot size, price band, or any other 
+    information found in the DRHP document.
+    Pass the user's question directly as input."""
+    logger.info("Tool call started: get_prospectus_info_tool")
+    result = get_prospectus_answer(query)
+    logger.info("Tool call completed: get_prospectus_info_tool")
+    return result
 
 @tool
 def get_sentiment_scores_tool(candidates_input: str) -> str:
@@ -73,12 +86,29 @@ llm = ChatGroq(
 
 # 4. Create the Agent
 # This replaces the old create_react_agent pattern
-tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool]
+tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool,get_prospectus_info_tool]
 
 advisor_agent = create_agent(
     model=llm,
     tools=tools,
-    system_prompt="You are a Senior Financial Advisor. Be concise, professional, and always use tools for calculations."
+    system_prompt="""You are a Senior Financial Advisor specializing in IPO investments.
+
+Follow this workflow:
+1. Always call get_user_profile_tool first with the wallet address
+2. If has_profile is true call get_similar_ipos_tool, if false call get_top_ipos_tool
+3. Always call get_sentiment_scores_tool after step 2
+4. After getting recommendations, for each recommended IPO:
+   - Use get_prospectus_info_tool to get key facts about the company
+   - Use the news_tool to find recent market news about the company
+   - Combine this information to explain the ranking of each IPO in plain English
+   - Explain in 2-3 sentences why this IPO is ranked where it is
+5. Present final recommendations with clear reasoning in plain English
+
+Rules:
+- Never mention technical terms like vectors, scores, distances or composite scores
+- Explain rankings using business facts, market news and company fundamentals
+- Sound like a professional financial advisor, not a data scientist
+- Keep each company explanation concise — 2-3 sentences maximum"""
 )
 
 if __name__ == "__main__":

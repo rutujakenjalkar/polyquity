@@ -1,9 +1,9 @@
 # Top IPO Tool Module
 
 from psycopg2 import Error
-#from tools.db_utils import execute_postgres_query
+from tools.db_utils import execute_postgres_query
 import json
-from db_utils import execute_postgres_query
+#from db_utils import execute_postgres_query
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:

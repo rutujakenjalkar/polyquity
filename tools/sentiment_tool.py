@@ -4,10 +4,11 @@ import json
 import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
-from cache import news_cache
+from tools.cache import news_cache
+''''
 from postgres_tool import get_user_profile
 from similarity_tool import similarity_tool
-from top_ipo_tool import top_ipo_tool
+from top_ipo_tool import top_ipo_tool'''
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:
@@ -125,7 +126,7 @@ def sentiment_tool(candidates_output: str) -> str:
             "error": str(e)
         })
 
-
+'''
 if __name__ == "__main__":
     set_run_id()
     print("Testing sentiment_tool with top IPOs for a user profile...\n")
@@ -134,3 +135,4 @@ if __name__ == "__main__":
     print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
     
+'''
