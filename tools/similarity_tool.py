@@ -11,6 +11,7 @@ from tools.db_utils import execute_postgres_query
 from postgres_tool import get_user_profile
 from db_utils import execute_postgres_query
 '''
+
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:

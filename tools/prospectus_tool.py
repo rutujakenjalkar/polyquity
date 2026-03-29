@@ -22,7 +22,7 @@ def get_prospectus_answer(query: str):
 
     # B. Use an LLM to "Clean and Answer"
     # This turns the "Further, CRISIL," fragments into a professional response
-    llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     
     prompt = f"""
     You are an IPO Expert. Use the following snippets from a Draft Red Herring Prospectus 

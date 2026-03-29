@@ -39,4 +39,5 @@ def news_tool(company_name: str, limit: int = 10) -> str:
 '''
 if __name__ == "__main__":
     set_run_id()
-    print(news_tool("Ola Electric"))'''
+    print(news_tool("HDFC Bank"))
+'''

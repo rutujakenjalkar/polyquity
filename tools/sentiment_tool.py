@@ -5,10 +5,13 @@ import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
 from tools.cache import news_cache
-''''
+
+'''
 from postgres_tool import get_user_profile
 from similarity_tool import similarity_tool
-from top_ipo_tool import top_ipo_tool'''
+from top_ipo_tool import top_ipo_tool
+'''
+
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:
@@ -24,14 +27,19 @@ finbert = pipeline(
 )
 
 
-def fetch_news(company_name: str) -> list:
+    
+
+
+def fetch_recent_company_news(company_name):
     """Fetch recent news headlines for a company from Google News RSS."""
-    query = quote_plus(f"{company_name}")
-    url = f"https://news.google.com/rss/search?q={query}+IPO&hl=en-IN&gl=IN&ceid=IN:en"
+    raw_query = f'"{company_name}" when:1d'
+    query = quote_plus(raw_query)
+    
+    url = f"https://news.google.com/rss/search?q={query}&hl=en-IN&gl=IN&ceid=IN:en"
+    
     feed = feedparser.parse(url)
     headlines = [entry.title for entry in feed.entries[:10]]
-    logger.debug("Fetched %d headlines for %s", len(headlines), company_name)
-
+    
     return headlines
 
 
@@ -70,7 +78,7 @@ def sentiment_tool(candidates_output: str) -> str:
             knn_distance = candidate["knn_distance"]
 
             # Fetch news
-            headlines = fetch_news(name)
+            headlines = fetch_recent_company_news(name)
 
             # Store in cache
             news_cache[name] = headlines
@@ -134,5 +142,6 @@ if __name__ == "__main__":
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
     print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
-    
+    print("news:",news_cache)
+
 '''

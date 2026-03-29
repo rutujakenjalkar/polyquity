@@ -5,7 +5,7 @@ from tools.postgres_tool import get_user_profile
 from tools.similarity_tool import similarity_tool
 from tools.logger_utils import get_logger, set_run_id
 from tools.sentiment_tool import sentiment_tool
-
+from tools.news_tool import news_tool
 import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
@@ -21,6 +21,18 @@ logger = get_logger(__name__, "workflow.log")
 load_dotenv()
 
 # 2. Define specialized Advisory tools
+
+@tool
+def get_latest_news_tool(company_name: str) -> str:
+    """Use this tool to fetch the absolute latest market news for a specific company.
+    This should be used to provide real-time context and recent developments 
+    (like leadership changes, earnings, or market sentiment).
+    Input should be the simple company name."""
+    logger.info(f"Tool call started: get_latest_news_tool for {company_name}")
+    # Assuming news_tool takes the company name and returns a string of headlines/summaries
+    result = news_tool(company_name) 
+    logger.info("Tool call completed: get_latest_news_tool")
+    return result
 
 @tool
 def get_prospectus_info_tool(query: str) -> str:
@@ -78,7 +90,7 @@ def get_similar_ipos_tool(postgres_tool_output: str) -> str:
 # 3. Initialize Groq (using Llama 3.1 for best tool-calling)
 # Updated for March 2026 standards
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile", # Updated model ID
+    model="llama-3.1-8b-instant", # Updated model ID
     temperature=0,
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
@@ -86,7 +98,7 @@ llm = ChatGroq(
 
 # 4. Create the Agent
 # This replaces the old create_react_agent pattern
-tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool,get_prospectus_info_tool]
+tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool,get_prospectus_info_tool,get_latest_news_tool]
 
 advisor_agent = create_agent(
     model=llm,
@@ -100,15 +112,24 @@ Follow this workflow:
 4. After getting recommendations, for each recommended IPO:
    - Use get_prospectus_info_tool to get key facts about the company
    - Use the news_tool to find recent market news about the company
-   - Combine this information to explain the ranking of each IPO in plain English
-   - Explain in 2-3 sentences why this IPO is ranked where it is
-5. Present final recommendations with clear reasoning in plain English
+   - Combine this information to explain the ranking of each IPO in plain English give very specific reasons based on company fundamentals and news.
+   - Explain in 3-4 sentences why this IPO is ranked where it is
+5. Present final recommendations with clear reasoning in plain English and Company wise points along with there reason
+    eg : 1. Amazon:
+            -Amazon is heavily investing in AI infrastructure, with AWS launching new AI models and chips (Nova, Trainium) while forming a strategic partnership with OpenAI.
+            - Amazon is cutting 16,000 jobs as part of a cost-cutting effort.
+         2. Lockheed Martin
+            -Production Surge: Lockheed Martin is quadrupling production of the Precision Strike Missile (PrSM) in collaboration with the Department of Defense.
+            -Lockheed Martin appointed Jenna McMullin as Senior Vice President and Chief Communications Officer.
 
+6.Also whenever information related to prospectus or news give point wise information.
+ 
 Rules:
 - Never mention technical terms like vectors, scores, distances or composite scores
 - Explain rankings using business facts, market news and company fundamentals
 - Sound like a professional financial advisor, not a data scientist
 - Keep each company explanation concise — 2-3 sentences maximum"""
+
 )
 
 if __name__ == "__main__":

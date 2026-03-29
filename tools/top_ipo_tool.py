@@ -48,8 +48,10 @@ def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transac
 			"error": str(e)
 		})
 
-
+'''
 # Example usage; remove or adapt for real code
 if __name__ == "__main__":
     set_run_id()
     print(top_ipo_tool())
+
+'''
