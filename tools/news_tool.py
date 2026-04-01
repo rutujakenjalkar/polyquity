@@ -1,4 +1,4 @@
-from tools.cache import news_cache
+from cache import news_cache
 import json
 
 
@@ -10,7 +10,7 @@ except ImportError:
 logger = get_logger(__name__, "news_tool.log")
 
 
-def news_tool(company_name: str, limit: int = 10) -> str:
+def news_tool(company_name: str, limit: int =10) -> str:
     """Return cached news headlines for a company as JSON."""
     try:
         logger.info("Starting news_tool for %s", company_name)
@@ -36,8 +36,7 @@ def news_tool(company_name: str, limit: int = 10) -> str:
             }
         )
 
-'''
+
 if __name__ == "__main__":
     set_run_id()
     print(news_tool("HDFC Bank"))
-'''

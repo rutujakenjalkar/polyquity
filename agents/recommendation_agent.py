@@ -90,7 +90,7 @@ def get_similar_ipos_tool(postgres_tool_output: str) -> str:
 # 3. Initialize Groq (using Llama 3.1 for best tool-calling)
 # Updated for March 2026 standards
 llm = ChatGroq(
-    model="llama-3.1-8b-instant", # Updated model ID
+    model="llama-3.3-70b-versatile", # Updated model ID
     temperature=0,
     groq_api_key=os.getenv("GROQ_API_KEY")
 )

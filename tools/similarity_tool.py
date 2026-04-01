@@ -3,14 +3,16 @@
 import json
 import numpy as np
 import ast
+
+'''
 from tools.postgres_tool import get_user_profile
 from tools.db_utils import execute_postgres_query
-
-
 '''
+
+
 from postgres_tool import get_user_profile
 from db_utils import execute_postgres_query
-'''
+
 
 try:
     from tools.logger_utils import get_logger, set_run_id
@@ -76,9 +78,9 @@ def similarity_tool(postgres_tool_output:str) -> str:
             distances.append((ipo_id, name, distnance))
 
         #print("Distances:", distances)
-        # Sort by distance and get bottom 5 (most similar)
+        # Sort by distance and get bottom 4 (most similar)
         distances.sort(key=lambda x: x[2])  
-        top_5 = distances[:5]
+        top_5 = distances[:4]
         logger.info("Computed top %d similar IPO candidates", len(top_5))
         #print("Top 5 Similar IPOs:", top_5)
 

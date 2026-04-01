@@ -4,13 +4,13 @@ import json
 import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
-from tools.cache import news_cache
+from cache import news_cache
 
-'''
+
 from postgres_tool import get_user_profile
 from similarity_tool import similarity_tool
 from top_ipo_tool import top_ipo_tool
-'''
+
 
 try:
     from tools.logger_utils import get_logger, set_run_id
@@ -68,6 +68,7 @@ def sentiment_tool(candidates_output: str) -> str:
     try:
         logger.info("Starting sentiment_tool")
         data = json.loads(candidates_output)
+        print("THIS IS THE DATA :",data)
         candidates = data["candidates"]
         logger.debug("Received %d candidates for sentiment scoring", len(candidates))
 
@@ -142,6 +143,10 @@ if __name__ == "__main__":
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
     print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
-    print("news:",news_cache)
+    for x in news_cache:
+        print("company:",x)
+        print("news:",news_cache[x],"\n")
 
 '''
+
+print(fetch_recent_company_news("HDFC Bank"))

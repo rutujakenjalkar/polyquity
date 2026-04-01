@@ -1,1 +1,0 @@
-# IPO Vectorizer Module
