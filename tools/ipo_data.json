@@ -1,65 +1,355 @@
 {
-  "url": "https://www.chittorgarh.com/ipo/bvishal-oil-and-energy-ipo/2988/",
-  "page_title": "Bvishal Oil and Energy IPO Date, Price, GMP, Details",
-  "ipo_name": "Bvishal Oil & Energy IPO Details",
+  "url": "https://www.chittorgarh.com/ipo/gsp-crop-ipo/2031/",
+  "page_title": "GSP Crop Science IPO Date, Price, GMP, Review, Details",
+  "ipo_name": "GSP Crop Science IPO Details",
   "tables": {
     "table_1": {
-      "IPO Date": "[.]",
-      "Listing Date": "[.]",
+      "IPO Date": "16 to 18 Mar, 2026",
+      "Listed on": "Tue, Mar 24, 2026",
       "Face Value": "₹10 per share",
-      "Price Band": "",
-      "Lot Size": "",
+      "Price Band": "₹304 to ₹320",
+      "Issue Price": "₹320 per share",
+      "Lot Size": "46 Shares",
       "Sale Type": "Fresh capital cum OFS",
       "Issue Type": "Bookbuilding IPO",
       "Listing At": "BSE, NSE"
     },
     "table_2": {
-      "Total Issue Size": "2,57,09,799 shares\n(agg. up to ₹[.] Cr)",
-      "Fresh Issue": "1,80,00,000 shares\n(agg. up to ₹[.] Cr)",
-      "Offer for Sale": "77,09,799 shares of ₹10\n(agg. up to ₹[.] Cr)",
-      "Share Holding Pre Issue": "5,37,75,000 shares",
-      "Share Holding Post Issue": "7,17,75,000 shares"
+      "Total Issue Size": "1,25,00,000 shares\n(agg. up to ₹400 Cr)",
+      "Fresh Issue": "75,00,000 shares\n(agg. up to ₹240 Cr)",
+      "Offer for Sale": "50,00,000 shares of ₹10\n(agg. up to ₹160 Cr)",
+      "Share Holding Pre Issue": "3,90,18,750 shares",
+      "Share Holding Post Issue": "4,65,18,750 shares",
+      "BSE Script Code / NSE Symbol": "544733 / GSPCROP",
+      "ISIN": "INE713R01022"
     },
     "table_3": {
-      "Description": "Date",
-      "Filed with SEBI/Exchange": "Tue, Mar 31, 2026"
+      "Investor Category": [
+        "Shares Offered",
+        "% of Total Issue",
+        "Max Allottees"
+      ],
+      "QIB Shares Offered": [
+        "62,50,000",
+        "50.00%",
+        "NA"
+      ],
+      "− Anchor Investor Shares Offered": [
+        "37,50,000",
+        "30.00%",
+        "NA"
+      ],
+      "− QIB (Ex. Anchor) Shares Offered": [
+        "25,00,000",
+        "20.00%",
+        "NA"
+      ],
+      "NII (HNI) Shares Offered": [
+        "18,75,000",
+        "15.00%",
+        "NA"
+      ],
+      "− bNII > ₹10L": [
+        "12,50,000",
+        "10.00%",
+        "1,940"
+      ],
+      "− sNII < ₹10L": [
+        "6,25,000",
+        "5.00%",
+        "970"
+      ],
+      "Retail Shares Offered": [
+        "43,75,000",
+        "35.00%",
+        "95,108"
+      ],
+      "Total Shares Offered": [
+        "1,25,00,000",
+        "100.00%",
+        ""
+      ]
     },
     "table_4": {
-      "Investor Category": "Shares Offered",
-      "QIB Shares Offered": "Not more than 50% of the Offer",
-      "Retail Shares Offered": "Not less than 35% of the Offer",
-      "NII Shares Offered": "Not less than 15% of the Offer"
+      "Application": [
+        "Lots",
+        "Shares",
+        "Amount"
+      ],
+      "Retail (Min)": [
+        "1",
+        "46",
+        "₹14,720"
+      ],
+      "Retail (Max)": [
+        "13",
+        "598",
+        "₹1,91,360"
+      ],
+      "S-HNI (Min)": [
+        "14",
+        "644",
+        "₹2,06,080"
+      ],
+      "S-HNI (Max)": [
+        "67",
+        "3,082",
+        "₹9,86,240"
+      ],
+      "B-HNI (Min)": [
+        "68",
+        "3,128",
+        "₹10,00,960"
+      ]
     },
     "table_5": {
-      "Period Ended": "30 Sep 2025",
-      "Assets": "435.85",
-      "Total Income": "92.94",
-      "Profit After Tax": "17.36",
-      "EBITDA": "34.17",
-      "NET Worth": "251.12",
-      "Reserves and Surplus": "207.91",
-      "Total Borrowing": "113.70"
+      "Bid Date": "Fri, Mar 13, 2026",
+      "Shares Offered": "37,50,000",
+      "Anchor Portion (₹ Cr.)": "120.00",
+      "Anchor lock-in period end date for 50% shares (30 Days)": "Sun, Apr 19, 2026",
+      "Anchor lock-in period end date for remaining shares (90 Days)": "Thu, Jun 18, 2026"
     },
     "table_6": {
-      "#": "Issue Objects",
-      "1": "Funding the capital expenditure requirements for the acquisition of machinery and equipment to support the expansion and strengthening of the operational capabilities (“proposed capital expenditure”)",
-      "2": "Funding the working capital requirements of the Company;",
-      "3": "General corporate purposes"
+      "Period Ended": [
+        "30 Sep 2025",
+        "31 Mar 2025",
+        "31 Mar 2024",
+        "31 Mar 2023"
+      ],
+      "Assets": [
+        "1,491.69",
+        "1,228.50",
+        "980.34",
+        "1,132.13"
+      ],
+      "Total Income": [
+        "847.61",
+        "1,301.06",
+        "1,158.23",
+        "1,206.05"
+      ],
+      "Profit After Tax": [
+        "81.07",
+        "81.42",
+        "55.54",
+        "17.57"
+      ],
+      "EBITDA": [
+        "138.86",
+        "164.03",
+        "130.41",
+        "81.28"
+      ],
+      "NET Worth": [
+        "529.85",
+        "450.03",
+        "370.46",
+        "363.47"
+      ],
+      "Reserves and Surplus": [
+        "490.84",
+        "411.02",
+        "344.46",
+        "336.00"
+      ],
+      "Total Borrowing": [
+        "321.13",
+        "295.60",
+        "235.44",
+        "324.26"
+      ]
     },
     "table_7": {
-      "KPI": "Sep 30, 2025",
-      "ROE": "7.29%",
-      "ROCE": "7.87%",
-      "Debt/Equity": "0.47",
-      "RoNW": "7.29%",
-      "PAT Margin": "19.08%",
-      "EBITDA Margin": "37.54%"
+      "#": [
+        "Issue Objects",
+        "Est Amt (₹ Cr.)"
+      ],
+      "1": [
+        "Repayment or pre-repayment of all or a portion of certain outstanding borrowings availed by the Company",
+        "170.00"
+      ],
+      "2": [
+        "General Corporate Purpose",
+        "50.32"
+      ],
+      "": [
+        "Total",
+        "220.32"
+      ]
     },
     "table_8": {
-      "EPS (₹)": "5.75",
-      "Promoter Holding": "81.46%"
+      "KPI": [
+        "Sep 30, 2025",
+        "Mar 31, 2025"
+      ],
+      "ROE": [
+        "15.62%",
+        "18.38%"
+      ],
+      "ROCE": [
+        "15.45%",
+        "19.80%"
+      ],
+      "Debt/Equity": [
+        "0.55",
+        "0.58"
+      ],
+      "PAT Margin": [
+        "9.56%",
+        "6.26%"
+      ],
+      "EBITDA Margin": [
+        "16.45%",
+        "12.74%"
+      ],
+      "Price to Book Value": [
+        "",
+        "2.77"
+      ]
+    },
+    "table_9": {
+      "": [
+        "Pre IPO",
+        "Post IPO"
+      ],
+      "EPS (₹)": [
+        "20.87",
+        "21.22"
+      ],
+      "P/E (x)": [
+        "15.34",
+        "9.18"
+      ],
+      "Promoter Holding": [
+        "98.32%",
+        "71.72%"
+      ],
+      "Market Cap": "₹1,488.60 Cr."
+    },
+    "table_10": {
+      "Review By": [
+        "Subscribe",
+        "May Apply",
+        "Neutral",
+        "Avoid"
+      ],
+      "Brokers": [
+        "5",
+        "0",
+        "2",
+        "1"
+      ],
+      "Members": [
+        "0",
+        "1",
+        "0",
+        "0"
+      ]
+    },
+    "table_11": {
+      "Category": [
+        "Subscription (x)",
+        "Shares Offered",
+        "Shares bid for"
+      ],
+      "QIB (Ex Anchor)": [
+        "2.66",
+        "25,00,000",
+        "66,46,356"
+      ],
+      "NII": [
+        "3.14",
+        "18,75,000",
+        "58,89,840"
+      ],
+      "bNII (> ₹10L)": [
+        "4.11",
+        "12,50,000",
+        "51,40,224"
+      ],
+      "sNII (< ₹10L)": [
+        "1.20",
+        "6,25,000",
+        "7,49,616"
+      ],
+      "Retail": [
+        "0.42",
+        "43,75,000",
+        "18,25,648"
+      ],
+      "Total": [
+        "1.64",
+        "87,50,000",
+        "1,43,61,844"
+      ]
+    },
+    "table_12": {
+      "#": [
+        "Issue Expenses",
+        "Est Amt (₹ Cr.)"
+      ],
+      "1": [
+        "BRLMs' fees and commissions",
+        "13.95"
+      ],
+      "2": [
+        "Commissions, processing fees, brokerage, underwriting and selling commission, and bidding charges payable to intermediaries including SCSBs, Sponsor Banks, Bankers to the Offer, Syndicate Members, Registered Brokers, RTAs and CDPs (including RBI bid fees)",
+        "1.07"
+      ],
+      "3": [
+        "(i) Listing fees, SEBI filing fees, upload fees, Stock Exchanges processing fees, book building software fees and other regulatory expenses",
+        "1.71"
+      ],
+      "4": [
+        "(ii) Printing and stationery expenses",
+        "0.42"
+      ],
+      "5": [
+        "(iii) Advertising and marketing expenses",
+        "2.15"
+      ],
+      "6": [
+        "(iv) Fees payable to legal counsel",
+        "4.24"
+      ],
+      "7": [
+        "(v) Fees payable to other intermediaries, such as auditors, ICA, ICE, practising company secretary, third-party research agency, experts, etc; and",
+        "4.09"
+      ],
+      "8": [
+        "(vi) Miscellaneous",
+        "5.18"
+      ],
+      "": [
+        "Total",
+        "32.81"
+      ]
+    },
+    "table_13": {
+      "Price Details": [
+        "BSE",
+        "NSE"
+      ],
+      "Final Issue Price": [
+        "₹320.00",
+        "₹320.00"
+      ],
+      "Open": [
+        "₹332.30",
+        "₹328.00"
+      ],
+      "Low": [
+        "₹327.35",
+        "₹328.00"
+      ],
+      "High": [
+        "₹363.60",
+        "₹364.00"
+      ],
+      "Last Trade": [
+        "₹356.10",
+        "₹356.25"
+      ]
     }
-  },
-  "subscription": {},
-  "body_snippet": "A-\nA\nA+\nIPO\nSME IPO\nNCD / RI / BB / OFS\nMutual Fund\nReports\nBroker Reviews\n►\nZerodha (₹20/Trade)Open Account\n►\nAngel One (₹20/Trade)Open Account\n►\nMotilal Oswal (Free Intraday)Open Account\nLoading...\nIPO Insights\nMainboard IPO\nSME IPO\nNCD, RI and BB Insights\nStock Broker Reviews\neBook\nStock Market\nReports\nOptions Trading (Basics)\nNRI\nAbout Chittorgarh City\nContact us\nClose\nDashboard\nIPO List\n  IPO List\nBvishal Oil & Energy IPO Details\n\nBookbuilding IPO | ₹[.] Cr | Listing at BSE, NSE |\n\nIPO Details\nMessages\nDocs \nNews\n\nBvishal Oil & Energy Ltd. has filed a Draft Red Herring Prospectus (DRHP) with SEBI on March 31, 2026 to raise funds through Initial Public Offer (IPO).\n\nBvishal Oil & Energy Ltd. IPO is a Book Build Issue of 2.57 crore equity shares consisting of a fresh issue of upto 1.80 crore equity shares and an offer for sale (OFS) of upto 0.77 crore equity shares.\n\nThe equity shares are proposed to be listed on NSE and BSE. Unistone Capital Pvt.Ltd. is the book running lead manager and Bigshare Services Pvt.Ltd. is the registrar of the issue. Key details like IPO dates, IPO price bands and lot size are yet to be announced.\nRefer to Bvishal Oil and Energy IPO DRHP  for more details.\n\nIPO Details\nIPO Date\t[.]\nListing Date\t[.]\nFace Value\t₹10 per share\nPrice Band\t\nLot Size\t\nSale Type\tFresh capital cum OFS\nIssue Type\tBookbuilding IPO\nListing At\tBSE, NSE\nTotal Issue Size\t2,57,09,799 shares\n(agg. up to ₹[.] Cr)\nFresh Issue\t1,80,00,000 shares\n(agg. up to ₹[.] Cr)\nOffer for Sale\t77,09,799 shares of ₹10\n(agg. up to ₹[.] Cr)\nShare Holding Pre Issue\t5,37,75,000 shares\nShare Holding Post Issue\t7,17,75,000 shares\nIPO DRHP Status\nDescription\tDate\nFiled with SEBI/Exchange\tTue, Mar 31, 2026\nIPO Reservation\nInvestor Category\tShares Offered\nQIB Shares Offered\tNot more than 50% of the Offer\nRetail Shares Offered\tNot less than 35% of the Offer\nNII Shares Offered\tNot less than 15% of the Offer\nAbout Bvishal Oil & Energy Ltd.\n\nIncorporated in 2017, Bvishal Oil and Energy Limited is a"
+  }
 }

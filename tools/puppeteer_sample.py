@@ -6,7 +6,6 @@ Install dependencies:
     pip install playwright
     playwright install chromium
 """
-
 import json
 from playwright.sync_api import sync_playwright
 
@@ -98,6 +97,20 @@ def main():
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"\n✅ Full data saved to: {out_path}")
+
+    # Load JSON file
+    with open('ipo_data.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+
+    # Extract table_5
+    table_5 = data.get("tables", {}).get("table_5", {})
+
+    # Print the result
+    print("Table 5 Data:")
+    for key, value in table_5.items():
+        print(f"{key}: {value}")
+
+
 
 
 if __name__ == "__main__":

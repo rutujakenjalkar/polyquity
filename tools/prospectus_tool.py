@@ -40,5 +40,6 @@ def get_prospectus_answer(query: str):
     return response.content
 
 
-
-print(get_prospectus_answer("What are the key risks mentioned in the Hyundai prospectus?"))
+'''
+print(get_prospectus_answer("give me the midsize companies"))
+'''
