@@ -4,8 +4,11 @@ import json
 from playwright.sync_api import sync_playwright
 from googlesearch import search
 import psycopg2
+from rutuja import get_ipo_url_professional
 
-URL = "https://www.chittorgarh.com/ipo/gsp-crop-ipo/2031/"
+def clean(val):
+        if not val: return 0.0
+        return float(str(val).replace(',', '').replace('%', '').strip())
 
 
 def scrape_ipo(url: str) -> dict:
@@ -38,7 +41,7 @@ def scrape_ipo(url: str) -> dict:
                 tables[f"table_{idx + 1}"] = table_data
 
         browser.close()
-
+    print("the data is scrped")
     return {
         "url": url,
         "page_title": title,
@@ -47,8 +50,8 @@ def scrape_ipo(url: str) -> dict:
     }
 
 
-def main():
-    data = scrape_ipo(URL)
+def get_data(url:str):
+    data = scrape_ipo(url)
 
     # Save JSON
     with open("ipo_data.json", "w", encoding="utf-8") as f:
@@ -59,43 +62,40 @@ def main():
 
 
 def extract_ipo_metrics(file_path):
+    
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     
     tables = data.get('tables', {})
+    
+    # Helper function to find a keyword anywhere in the JSON tables
+    def find_key(keyword):
+        for table_id, content in tables.items():
+            if keyword in content:
+                value = content[keyword]
+                # If it's a list, return the first item (usually the most recent)
+                return value[0] if isinstance(value, list) else value
+        return None
 
-    # 1. PE Ratio & EPS (from table_9 - Pre IPO column)
-    # The list contains [Pre IPO, Post IPO]
-    pe_ratio = tables.get('table_9', {}).get('P/E (x)', [None])[0]
-    eps = tables.get('table_9', {}).get('EPS (₹)', [None])[0]
-
-    # 2. ROE & Debt/Equity (from table_8 - most recent period: Sep 30, 2025)
-    # The list contains [Sep 30 2025, Mar 31 2025]
-    roe = tables.get('table_8', {}).get('ROE', [None])[0]
-    debt_equity = tables.get('table_8', {}).get('Debt/Equity', [None])[0]
-
-    # 3. PAT & Revenue (from table_6 - most recent period: 30 Sep 2025)
-    # The list contains [30 Sep 2025, 31 Mar 2025, 31 Mar 2024, 31 Mar 2023]
-    pat = tables.get('table_6', {}).get('Profit After Tax', [None])[0]
-    revenue = tables.get('table_6', {}).get('Total Income', [None])[0]
+    # Dynamically extract metrics regardless of table number
+    pe_ratio    = find_key('P/E (x)')
+    eps         = find_key('EPS (₹)')
+    roe         = find_key('ROE')
+    roce        = find_key('ROCE')
+    pat         = find_key('Profit After Tax')
+    revenue     = find_key('Total Income') # Revenue is often called Total Income here
 
     return {
         "PE Ratio": pe_ratio,
         "EPS": eps,
         "ROE": roe,
-        "Debt/Equity": debt_equity,
+        "ROCE": roce,
         "PAT": pat,
         "Revenue": revenue
     }
 
 
 def classify_company(revenue):
-    """
-    Classifies a Media & Entertainment company based on industry benchmarks.
-    Thresholds: Large > 5B, Mid 500M-5B, Small < 500M.
-    Assumes values are in Millions (e.g., 847.61 = $847.61M).
-    """
-    
     # Priority 1: Revenue Classification
     if revenue >= 5000.00:
         return "Large"
@@ -104,19 +104,25 @@ def classify_company(revenue):
     elif revenue < 500.00:
         # Secondary check: High asset value can bump a small-revenue firm to Mid
         return "Small"
-    
+    print("the companyis classifeis")
     return "Unknown"
 
 
 def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
-    main()
+    company=get_ipo_url_professional(name)
+    get_data(company)
     result=extract_ipo_metrics("ipo_data.json")
-    result["cap_size"]=classify_company(float(result['Revenue']))
     print(result)
-    s = result['ROE']
-    roe = float(s.strip("%"))
-    print(roe)  # Output: 15.62
 
+    rev_val = clean(result.get('Revenue'))
+    pe_val  = clean(result.get('PE Ratio'))
+    eps_val = clean(result.get('EPS'))
+    roe_val = clean(result.get('ROE'))
+    roce_val = clean(result.get('ROCE'))
+    pat_val = clean(result.get('PAT'))
+    
+    result["cap_size"] = classify_company(rev_val)
+    
     try:
             # Connect to the database
             connection = psycopg2.connect(
@@ -129,10 +135,13 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
             cursor = connection.cursor()
 
             # Add an entry (Insert)
-            insert_query = "INSERT INTO ipo (ipo_id,name,revenue,pe_ratio,eps,equity,roe,pat,cap_size,ipfs_doc_cid) VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s,%s)"
-            record_to_insert = (ipo_id,name,float(result['Revenue']),float(result['PE Ratio']),float(result['EPS']),float(result['Debt/Equity']),roe,float(result['PAT']),result['cap_size'],ipo_cid)
+            insert_query = "INSERT INTO ipo (ipo_id,name,revenue,pe_ratio,eps,roce,roe,pat,cap_size,ipfs_doc_cid) VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s,%s)"
+            print("the error is occuring here")
+            record_to_insert = (ipo_id, name, rev_val, pe_val, eps_val, roce_val, roe_val, pat_val, result['cap_size'], ipo_cid)
+        
+            print("this line")
             cursor.execute(insert_query, record_to_insert)
-
+            print("this line")
             # Commit changes to save to the database
             connection.commit()
             print("Record inserted successfully")
@@ -149,4 +158,5 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
 
 
 if __name__ == "__main__":
-   print(add_to_table("b0632b91-6ac5-4dab-bd13-437b5cc703dc","gsp-crop-ipo","QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n"))
+   print(add_to_table('b0632b91-6ac5-4dab-bd13-437b5cc703de','Novus Loyalty','QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR13'))
+   
