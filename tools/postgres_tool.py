@@ -4,7 +4,7 @@ import ast
 import json
 from psycopg2 import Error
 import numpy as np
-from db_utils import execute_postgres_query
+from tools.db_utils import execute_postgres_query
 #from db_utils import execute_postgres_query
 try:
 	from tools.logger_utils import get_logger, set_run_id
@@ -110,13 +110,13 @@ def get_user_profile(wallet_address: str) -> dict:
 	
 
 
-'''
 
+
+'''
 # small example showing usage
 if __name__ == "__main__":
-	set_run_id()
-	wallet_address = "0x2b3c4d5e6f7890abcdef1234567890abcdef1234"
+	print(set_run_id())
+	wallet_address = "0x9707158A1a41898305f116a172571b8020819714"
 	result = get_user_profile(wallet_address)
 	print( result)
-
 '''

@@ -1,9 +1,9 @@
 # Top IPO Tool Module
 
 from psycopg2 import Error
-#from tools.db_utils import execute_postgres_query
+from tools.db_utils import execute_postgres_query
 import json
-from db_utils import execute_postgres_query
+#from db_utils import execute_postgres_query
 try:
     from tools.logger_utils import get_logger, set_run_id
 except ImportError:
@@ -12,7 +12,7 @@ except ImportError:
 logger = get_logger(__name__, "top_ipo_tool.log")
 
 
-def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY net_profit DESC, revenue DESC LIMIT 5;") -> dict:
+def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY pe_ratio ASC, roce DESC LIMIT 4;") -> dict:
 	"""Get top IPOs with error handling.
 	Executes a query to fetch top IPOs and returns results with status.
 	Args:
@@ -24,7 +24,7 @@ def top_ipo_tool(query: str = "SELECT ipo.ipo_id, ipo.name FROM ipo JOIN transac
 	try:
 		logger.info("Fetching top IPOs")
 		results = execute_postgres_query(
-			query="SELECT ipo_id, name FROM ipo ORDER BY net_profit DESC, revenue DESC LIMIT 5;"
+			query="SELECT ipo_id, name FROM ipo ORDER BY pe_ratio ASC, roce DESC LIMIT 4;"
 		)
 		logger.debug("Top IPO query returned %d rows", len(results))
 		return json.dumps({

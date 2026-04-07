@@ -13,6 +13,7 @@ from langchain.agents import create_agent
 from langchain_core.tools import tool
 from langchain_core.globals import set_debug
 from tools.prospectus_tool import get_prospectus_answer
+from tools.filter import cap_size_filter_tool
 set_debug(False)
 
 logger = get_logger(__name__, "workflow.log")
@@ -21,6 +22,14 @@ logger = get_logger(__name__, "workflow.log")
 load_dotenv()
 
 # 2. Define specialized Advisory tools
+
+
+@tool
+def get_ipos_by_cap_size_tool(cap_size: str) -> str:
+    """Use this tool when user asks about Large cap, Mid cap or Small cap IPOs.
+    Input should be 'Large', 'Mid' or 'Small'.
+    Returns list of IPOs filtered by market cap size."""
+    return cap_size_filter_tool(cap_size)
 
 @tool
 def get_latest_news_tool(company_name: str) -> str:
@@ -133,12 +142,12 @@ Rules:
 )
 
 if __name__ == "__main__":
-    
+    print("RUNNING ..........")
     # 5. Execute the Advisory Task
-    user_query = "Give me IPO recommendations for wallet 0x2b3c4d5e6f7890abcdef1234567890abcdef1235"
+    user_query = "Give me IPO recommendations for wallet 0xABCDEF1234567890ABCDEF1234567890ABCDEF12"
     run_id = set_run_id()
     logger.info("Starting recommendation workflow for query: %s", user_query)
-
+    print("GETTING RESPONSE")
     # The agent returns a dictionary containing the full message history
     response = advisor_agent.invoke({"messages": [("user", user_query)]})
     logger.info("Recommendation workflow completed")

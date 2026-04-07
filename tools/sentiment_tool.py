@@ -4,12 +4,12 @@ import json
 import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
-from cache import news_cache
+from tools.cache import news_cache
 
 
-from postgres_tool import get_user_profile
-from similarity_tool import similarity_tool
-from top_ipo_tool import top_ipo_tool
+from tools.postgres_tool import get_user_profile
+from tools.similarity_tool import similarity_tool
+from tools.top_ipo_tool import top_ipo_tool
 
 
 try:
@@ -139,14 +139,14 @@ def sentiment_tool(candidates_output: str) -> str:
 if __name__ == "__main__":
     set_run_id()
     print("Testing sentiment_tool with top IPOs for a user profile...\n")
-    postgres_output = get_user_profile("0x2b3c4d5e6f7890abcdef1234567890abcdef1234")
+    postgres_output = get_user_profile("0x99A1B2C3D4E5F678901234567890ABCDEF123456")
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
     print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
     for x in news_cache:
         print("company:",x)
         print("news:",news_cache[x],"\n")
-
 '''
-
+'''
 print(fetch_recent_company_news("HDFC Bank"))
+'''

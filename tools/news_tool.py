@@ -1,4 +1,4 @@
-from cache import news_cache
+from tools.cache import news_cache
 import json
 
 

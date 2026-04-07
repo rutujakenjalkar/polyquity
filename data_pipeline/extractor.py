@@ -4,61 +4,18 @@ import json
 from playwright.sync_api import sync_playwright
 from googlesearch import search
 import psycopg2
-from rutuja import get_ipo_url_professional
+from extractor_utils import get_ipo_url_professional,scrape_ipo,get_data
+
+
+import os
+from dotenv import load_dotenv
+
+# Load the variables from the .env file into the system environment
+load_dotenv()
 
 def clean(val):
         if not val: return 0.0
         return float(str(val).replace(',', '').replace('%', '').strip())
-
-
-def scrape_ipo(url: str) -> dict:
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-
-        print(f"Opening: {url}")
-        page.goto(url, wait_until="domcontentloaded", timeout=30000)
-
-        title = page.title()
-        ipo_name = page.locator("h1").first.inner_text()
-
-        # Extract all tables
-        tables = {}
-        table_elements = page.locator("table").all()
-
-        for idx, table in enumerate(table_elements):
-            rows = table.locator("tr").all()
-            table_data = {}
-
-            for row in rows:
-                cells = row.locator("td, th").all()
-                texts = [cell.inner_text().strip() for cell in cells]
-
-                if len(texts) >= 2:
-                    table_data[texts[0]] = texts[1:] if len(texts) > 2 else texts[1]
-
-            if table_data:
-                tables[f"table_{idx + 1}"] = table_data
-
-        browser.close()
-    print("the data is scrped")
-    return {
-        "url": url,
-        "page_title": title,
-        "ipo_name": ipo_name,
-        "tables": tables
-    }
-
-
-def get_data(url:str):
-    data = scrape_ipo(url)
-
-    # Save JSON
-    with open("ipo_data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
-    print("✅ Data saved to ipo_data.json")
-
 
 
 def extract_ipo_metrics(file_path):
@@ -157,6 +114,21 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
 
 
 
+
 if __name__ == "__main__":
-   print(add_to_table('b0632b91-6ac5-4dab-bd13-437b5cc703de','Novus Loyalty','QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR13'))
-   
+   print(add_to_table('550e8400-e29b-41d4-a716-446655440000','Vivid Electromech','bafybeifwsf7ll4xktmaajwqanumha5btcy7wcsyohpfclmxebetu2itgm4'))
+
+
+'''
+
+def get_pinata_url(cid):
+    # Retrieve the gateway from environment variables
+    # If not found, it defaults to the public gateway
+    gateway = os.getenv("PINATA_GATEWAY", "gateway.pinata.cloud")
+    return f"https://{gateway}/ipfs/{cid}"
+
+# Example Usage:
+my_cid = "bafybeig6awp2ktcmdapa3nf3rb5rwvcwlwqlcadjfgghtehoigki5jb4gy"
+print(get_pinata_url(my_cid))
+
+'''
