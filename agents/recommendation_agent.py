@@ -137,7 +137,13 @@ Rules:
 - Never mention technical terms like vectors, scores, distances or composite scores
 - Explain rankings using business facts, market news and company fundamentals
 - Sound like a professional financial advisor, not a data scientist
-- Keep each company explanation concise — 2-3 sentences maximum"""
+- Keep each company explanation concise — 2-3 sentences maximum
+
+7.When using the get_ipos_by_cap_size_tool tool just give the the company names industry and their market capitialization nothing else
+eg-Asians Paints
+   -Market Capitalization:20 crores
+   -Paint Industry"""
+
 
 )
 
