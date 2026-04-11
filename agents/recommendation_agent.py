@@ -1,13 +1,20 @@
 # Recommendation Agent Module
 
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
 from tools.top_ipo_tool import top_ipo_tool
 from tools.postgres_tool import get_user_profile
 from tools.similarity_tool import similarity_tool
 from tools.logger_utils import get_logger, set_run_id
 from tools.sentiment_tool import sentiment_tool
 from tools.news_tool import news_tool
-import os
-from dotenv import load_dotenv
+from tools.cache import news_cache
+
 from langchain_groq import ChatGroq
 from langchain.agents import create_agent
 from langchain_core.tools import tool
@@ -17,9 +24,10 @@ from tools.filter import cap_size_filter_tool
 set_debug(False)
 
 logger = get_logger(__name__, "workflow.log")
+cap_size_tool_logger = get_logger("cap_size_tool_wrapper", "get_ipos_by_cap_size_tool.log")
 
 # 1. Load the Groq key from your .env
-load_dotenv()
+
 
 # 2. Define specialized Advisory tools
 
@@ -29,7 +37,20 @@ def get_ipos_by_cap_size_tool(cap_size: str) -> str:
     """Use this tool when user asks about Large cap, Mid cap or Small cap IPOs.
     Input should be 'Large', 'Mid' or 'Small'.
     Returns list of IPOs filtered by market cap size."""
-    return cap_size_filter_tool(cap_size)
+    cap_size_tool_logger.info(
+        "Tool call started: get_ipos_by_cap_size_tool with cap_size=%s",
+        cap_size,
+    )
+    try:
+        result = cap_size_filter_tool(cap_size)
+        cap_size_tool_logger.info("Tool call completed: get_ipos_by_cap_size_tool")
+        return result
+    except Exception:
+        cap_size_tool_logger.exception(
+            "Tool call failed: get_ipos_by_cap_size_tool with cap_size=%s",
+            cap_size,
+        )
+        raise
 
 @tool
 def get_latest_news_tool(company_name: str) -> str:
@@ -107,7 +128,7 @@ llm = ChatGroq(
 
 # 4. Create the Agent
 # This replaces the old create_react_agent pattern
-tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool,get_prospectus_info_tool,get_latest_news_tool]
+tools = [get_user_profile_tool, get_top_ipos_tool, get_similar_ipos_tool,get_sentiment_scores_tool,get_prospectus_info_tool,get_latest_news_tool,get_ipos_by_cap_size_tool]
 
 advisor_agent = create_agent(
     model=llm,
@@ -150,7 +171,7 @@ eg-Asians Paints
 if __name__ == "__main__":
     print("RUNNING ..........")
     # 5. Execute the Advisory Task
-    user_query = "Give me IPO recommendations for wallet 0xABCDEF1234567890ABCDEF1234567890ABCDEF12"
+    user_query = "Give me IPO recommendations for wallet 0xDEADAFFE1234567890ABCDEF1234567890ABCDEF"
     run_id = set_run_id()
     logger.info("Starting recommendation workflow for query: %s", user_query)
     print("GETTING RESPONSE")
@@ -174,5 +195,5 @@ if __name__ == "__main__":
             break
         conversation_history.append(("user", user_input))
         response = advisor_agent.invoke({"messages": conversation_history})
-        conversation_history = response["messages"]  # keep history growing
+        conversation_history = response["messages"] # keep history growing
         print(f"\nAdvisor: {response['messages'][-1].content}\n")

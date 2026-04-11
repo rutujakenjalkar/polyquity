@@ -4,6 +4,10 @@ import json
 import feedparser
 from transformers import pipeline
 from urllib.parse import quote_plus
+from transformers import pipeline
+from transformers.utils import logging as transformers_logging
+from huggingface_hub.utils import disable_progress_bars
+
 from tools.cache import news_cache
 
 
@@ -19,6 +23,10 @@ except ImportError:
 
 logger = get_logger(__name__, "sentiment_tool.log")
 
+disable_progress_bars()
+transformers_logging.set_verbosity_error()
+
+
 # Load FinBERT model once at startup
 finbert = pipeline(
     "text-classification",
@@ -32,7 +40,7 @@ finbert = pipeline(
 
 def fetch_recent_company_news(company_name):
     """Fetch recent news headlines for a company from Google News RSS."""
-    raw_query = f'"{company_name}" when:1d'
+    raw_query = f'"{company_name}" when:7d'
     query = quote_plus(raw_query)
     
     url = f"https://news.google.com/rss/search?q={query}&hl=en-IN&gl=IN&ceid=IN:en"
@@ -134,18 +142,20 @@ def sentiment_tool(candidates_output: str) -> str:
             "error": str(e)
         })
 
+
 '''
+
 if __name__ == "__main__":
     set_run_id()
     print("Testing sentiment_tool with top IPOs for a user profile...\n")
-    postgres_output = get_user_profile("0x99A1B2C3D4E5F678901234567890ABCDEF123456")
+    postgres_output = get_user_profile("0xDEADAFFE1234567890ABCDEF1234567890ABCDEF")
     print("SIMILARTIY TOOL OUTPUT",similarity_tool(postgres_output))
     print("\nSENTIMENT TOOL OUTPUT",sentiment_tool(similarity_tool(postgres_output)))
     print("Testing sentiment_tool with top IPOs for new user...\n")
     for x in news_cache:
         print("company:",x)
         print("news:",news_cache[x],"\n")
-'''
-'''
-print(fetch_recent_company_news("HDFC Bank"))
+
+
+
 '''

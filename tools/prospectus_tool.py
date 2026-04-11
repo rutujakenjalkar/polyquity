@@ -3,7 +3,7 @@ from astrapy import DataAPIClient
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI # Or your preferred LLM
 load_dotenv()
-print("Astra and Langchain imported successfully.")
+#print("Astra and Langchain imported successfully.")
 
 # 1. The function that "Heals" the broken text into a proper answer
 def get_prospectus_answer(query: str):
