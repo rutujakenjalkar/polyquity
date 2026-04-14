@@ -118,20 +118,8 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
 
 
 
-
+'''
 if __name__ == "__main__":
    print(add_to_table('905d48c5-9a21-4b9d-aa4f-e44f25a6af27','Innovision','bafybeidiitbmfuruxlwtzixi3dt54tt75gvycmrsyaglnwpo3pr7ljmuwa'))
-
-'''
-def get_pinata_url(cid):
-    # Retrieve the gateway from environment variables
-    # If not found, it defaults to the public gateway
-    gateway = os.getenv("PINATA_GATEWAY", "gateway.pinata.cloud")
-    return f"https://{gateway}/ipfs/{cid}"
-'''
-# Example Usage:
-'''
-my_cid = "bafybeid77yjwjzswqcm7jty2tz6mvhjhurb2jbsprs23nusgxlyetrbqjy"
-print(get_pinata_url(my_cid))
 
 '''
