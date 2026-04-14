@@ -85,11 +85,11 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
     try:
             # Connect to the database
             connection = psycopg2.connect(
-                dbname="POLYQUITY_DATA", 
-                user="postgres", 
-                password="rutuja", 
-                host="localhost", 
-                port="5432"
+                dbname=os.environ["POSTGRES_DB"], 
+                user=os.environ["POSTGRES_USER"], 
+                password=os.environ["POSTGRES_PASSWORD"], 
+                host=os.environ["POSTGRES_HOST"], 
+                port=os.environ["POSTGRES_PORT"]
             )
             cursor = connection.cursor()
 

@@ -103,9 +103,10 @@ def similarity_tool(postgres_tool_output:str) -> str:
 
 
 
-
+'''
 
 if __name__ == "__main__":
     set_run_id()
     postgres_output = get_user_profile("0x32Be343B94f860124dC4fEe278FDCBD38C102D88")
     print(similarity_tool(postgres_output))
+'''

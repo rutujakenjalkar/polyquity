@@ -1,10 +1,13 @@
 # Postgres Tool Module
-
+import os
+from dotenv import load_dotenv
 import ast
 import json
 from psycopg2 import Error
 import numpy as np
 from tools.db_utils import execute_postgres_query
+
+load_dotenv()
 #from db_utils import execute_postgres_query
 try:
 	from tools.logger_utils import get_logger, set_run_id
@@ -41,19 +44,13 @@ def get_user_profile(wallet_address: str) -> dict:
 	"""
 	try:
 		logger.info("Starting get_user_profile for wallet %s", wallet_address)
-		# Default connection parameters
-		host = "localhost"
-		database = "POLYQUITY_DATA"
-		user = "postgres"
-		password = "rutuja"
-		port = "5432"
 
 		has_transactions = wallet_has_transactions(
-			host=host,
-			database=database,
-			user=user,
-			password=password,
-			port=port,
+			host=os.environ["POSTGRES_HOST"],
+			database= os.environ["POSTGRES_DB"],
+			user= os.environ["POSTGRES_USER"],
+			password=os.environ["POSTGRES_PASSWORD"],
+			port=os.environ["POSTGRES_PORT"],
 			wallet_address=wallet_address,
 		)
 
@@ -67,11 +64,6 @@ def get_user_profile(wallet_address: str) -> dict:
 
 		# fetch embeddings and ipo_ids of purchased IPOs
 		rows = execute_postgres_query(
-			host=host,
-			database=database,
-			user=user,
-			password=password,
-			port=port,
 			query=(
 				"SELECT ipo.ipo_id, ipo.embedding FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id WHERE transaction.wallet_address = %s;"
 			),
@@ -116,7 +108,7 @@ def get_user_profile(wallet_address: str) -> dict:
 # small example showing usage
 if __name__ == "__main__":
 	print(set_run_id())
-	wallet_address = "0x9707158A1a41898305f116a172571b8020819714"
+	wallet_address = "0x1234567890ABCDEF1234567890ABCDEF12345678"
 	result = get_user_profile(wallet_address)
 	print( result)
 '''

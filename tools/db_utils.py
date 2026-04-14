@@ -1,16 +1,18 @@
 # Database Utility Module
-
+import os
+from dotenv import load_dotenv
 import psycopg2
 from psycopg2 import Error
 
+load_dotenv()
 
 def execute_postgres_query(
     query: str = "SELECT ipo.ipo_id, ipo.name  FROM ipo JOIN transaction ON ipo.ipo_id = transaction.ipo_id ORDER BY net_profit DESC, revenue DESC LIMIT 5;",
-    host: str = "localhost",
-    database: str = "POLYQUITY_DATA",
-    user: str = "postgres",
-    password: str = "rutuja",
-    port: str = "5432",
+    host: str = os.environ["POSTGRES_HOST"],
+    database: str = os.environ["POSTGRES_DB"],
+    user: str = os.environ["POSTGRES_USER"],
+    password: str = os.environ["POSTGRES_PASSWORD"],
+    port: str = os.environ["POSTGRES_PORT"],
     params: tuple | None = None,
 ) -> list[list]:
     """Connect to a PostgreSQL database and execute a query.

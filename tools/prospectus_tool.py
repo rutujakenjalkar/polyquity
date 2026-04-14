@@ -39,4 +39,6 @@ def get_prospectus_answer(query: str):
     response = llm.invoke(prompt)
     return response.content
 
+'''
 print(get_prospectus_answer("""For Om power transmision which are it's major clients"""))
+'''
