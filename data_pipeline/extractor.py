@@ -4,11 +4,13 @@ import json
 from playwright.sync_api import sync_playwright
 from googlesearch import search
 import psycopg2
-from extractor_utils import get_ipo_url_professional,scrape_ipo,get_data
-
-
 import os
 from dotenv import load_dotenv
+from extractor_utils import get_ipo_url_professional,scrape_ipo,get_data,get_pinata_url
+from sample_upload import upload_pdf_to_astra
+
+
+
 
 # Load the variables from the .env file into the system environment
 load_dotenv()
@@ -96,12 +98,14 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
             print("the error is occuring here")
             record_to_insert = (ipo_id, name, rev_val, pe_val, eps_val, roce_val, roe_val, pat_val, result['cap_size'], ipo_cid)
         
-            print("this line")
             cursor.execute(insert_query, record_to_insert)
-            print("this line")
             # Commit changes to save to the database
             connection.commit()
             print("Record inserted successfully")
+            url_astra=get_pinata_url(ipo_cid)
+            print(url_astra)
+            upload_pdf_to_astra(url_astra)
+
 
     except Exception as error:
             print(f"Error: {error}")
@@ -116,19 +120,18 @@ def add_to_table(ipo_id:uuid.UUID,name:str,ipo_cid:str):
 
 
 if __name__ == "__main__":
-   print(add_to_table('550e8400-e29b-41d4-a716-446655440000','Vivid Electromech','bafybeifwsf7ll4xktmaajwqanumha5btcy7wcsyohpfclmxebetu2itgm4'))
-
+   print(add_to_table('905d48c5-9a21-4b9d-aa4f-e44f25a6af27','Innovision','bafybeidiitbmfuruxlwtzixi3dt54tt75gvycmrsyaglnwpo3pr7ljmuwa'))
 
 '''
-
 def get_pinata_url(cid):
     # Retrieve the gateway from environment variables
     # If not found, it defaults to the public gateway
     gateway = os.getenv("PINATA_GATEWAY", "gateway.pinata.cloud")
     return f"https://{gateway}/ipfs/{cid}"
-
+'''
 # Example Usage:
-my_cid = "bafybeig6awp2ktcmdapa3nf3rb5rwvcwlwqlcadjfgghtehoigki5jb4gy"
+'''
+my_cid = "bafybeid77yjwjzswqcm7jty2tz6mvhjhurb2jbsprs23nusgxlyetrbqjy"
 print(get_pinata_url(my_cid))
 
 '''

@@ -9,7 +9,7 @@ load_dotenv()
 def get_prospectus_answer(query: str):
     client = DataAPIClient(os.getenv("ASTRA_DB_APPLICATION_TOKEN"))
     db = client.get_database_by_api_endpoint(os.getenv("ASTRA_DB_API_ENDPOINT"))
-    collection = db.get_collection("polyquity_prospectus")
+    collection = db.get_collection("demo")
 
     # A. Retrieve the 5 "broken" chunks
     results = collection.find(
@@ -39,3 +39,4 @@ def get_prospectus_answer(query: str):
     response = llm.invoke(prompt)
     return response.content
 
+print(get_prospectus_answer("""For Om power transmision which are it's major clients"""))

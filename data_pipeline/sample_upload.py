@@ -1,76 +1,96 @@
-import io
 import os
-import time
-import uuid
-
 import requests
+import io
+import uuid
+import time
+from pypdf import PdfReader
 from astrapy import DataAPIClient
 from dotenv import load_dotenv
+import os
+import requests
+import io
+import uuid
+import time
 from pypdf import PdfReader
+from astrapy import DataAPIClient
+from dotenv import load_dotenv
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 load_dotenv()
 
-
 def upload_pdf_to_astra(pinata_url: str):
     start_time = time.perf_counter()
+    
+    # 1. SETUP & CONFIG
     astra_token = os.environ["ASTRA_DB_APPLICATION_TOKEN"]
     astra_api_endpoint = os.environ["ASTRA_DB_API_ENDPOINT"]
-    collection_name = os.environ["ASTRA_COLLECTION"]
-    chunk_size = int(os.getenv("CHUNK_SIZE", 500))
-    chunk_overlap = int(os.getenv("CHUNK_OVERLAP", 100))
-    batch_size = int(os.getenv("BATCH_SIZE", 20))
+    collection_name = "polyquity_prospectus"
+    
+    # NVIDIA limits: 2000 chars is safe for the 512-token limit
+    char_limit = 600 
+    char_overlap = 200
+    batch_size = 20
+    max_workers = 5 
 
     client = DataAPIClient(astra_token)
     db = client.get_database_by_api_endpoint(astra_api_endpoint)
     collection = db.get_collection(collection_name)
-    print(f"Using existing collection: {collection_name}")
-
-    response = requests.get(pinata_url, stream=True)
-    response.raise_for_status()
-    pdf_buffer = io.BytesIO(response.content)
-
+    
+    # 2. DOWNLOAD & EXTRACT TEXT
+    print(f"🚀 Downloading PDF...")
+    res = requests.get(pinata_url, stream=True)
+    res.raise_for_status()
+    pdf_buffer = io.BytesIO(res.content)
+    
     reader = PdfReader(pdf_buffer)
     full_text = ""
     for page in reader.pages:
         text = page.extract_text()
-        if text and text.strip():
+        if text:
             full_text += text.strip() + "\n"
-
-    print(f"Extracted {len(full_text.split())} words from {len(reader.pages)} pages.")
-
-    words = full_text.split()
+    
+    # 3. CHUNKING
     chunks = []
     start = 0
-    while start < len(words):
-        chunk = " ".join(words[start:start + chunk_size])
-        chunks.append(chunk)
-        start += chunk_size - chunk_overlap
+    while start < len(full_text):
+        chunks.append(full_text[start : start + char_limit])
+        start += (char_limit - char_overlap)
 
-    print(f"Created {len(chunks)} chunks.")
-
+    # 4. PREPARE DOCUMENTS
     documents = [
         {
             "_id": str(uuid.uuid4()),
-            "chunk_index": i,
-            "text": chunk,
-            "source_url": pinata_url,
-        }
-        for i, chunk in enumerate(chunks)
+            "$vectorize": chunk,
+            "metadata": {"chunk_index": i, "text": chunk, "source": pinata_url}
+        } for i, chunk in enumerate(chunks)
     ]
 
-    for i in range(0, len(documents), batch_size):
-        batch = documents[i:i + batch_size]
-        collection.insert_many(batch)
-        print(f"Inserted batch {i // batch_size + 1} ({len(batch)} docs)")
+    # 5. DEFINE WORKER & EXECUTE PARALLEL UPLOAD
+    # We define the batch function inside the main function to keep it all in one
+    def worker_upload(batch_data, b_idx):
+        for attempt in range(3):
+            try:
+                collection.insert_many(batch_data)
+                return f"✅ Batch {b_idx} done"
+            except Exception as e:
+                if "429" in str(e) or "timeout" in str(e).lower():
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                return f"❌ Batch {b_idx} error: {e}"
+        return f"❌ Batch {b_idx} failed after retries"
 
-    print(f"Uploaded {len(documents)} chunks successfully.")
+    batches = [documents[i : i + batch_size] for i in range(0, len(documents), batch_size)]
+    print(f"📦 Uploading {len(chunks)} chunks in {len(batches)} batches...")
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(worker_upload, b, i) for i, b in enumerate(batches)]
+        for future in as_completed(futures):
+            print(future.result())
+
     total_time = time.perf_counter() - start_time
-    print(f"Total execution time: {total_time:.2f} seconds")
-    return documents
+    print(f"\n✨ FINISHED in {total_time:.2f} seconds.")
 
-
-upload_pdf_to_astra(
-    "https://amethyst-defensive-bovid-22.mypinata.cloud/ipfs/"
-    "bafybeig6awp2ktcmdapa3nf3rb5rwvcwlwqlcadjfgghtehoigki5jb4gy"
-    "?pinataGatewayToken=VcE_9hln7dMXmqBui_l1KyxKkCxInRVzqRPujWj3ItO_vsSS31BoLb6VeWs9vS7A"
-)
+'''
+# ── Usage ─────────────────────────────────────────────────────────────────────
+upload_pdf_to_astra("https://gateway.pinata.cloud/ipfs/bafybeieppaobv5w3xyupb67qlk5ilw757z7mbesakannwdnpevvbkdex7q")
+'''

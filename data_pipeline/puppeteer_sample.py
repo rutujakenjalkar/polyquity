@@ -115,3 +115,71 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+'''
+
+def upload_pdf_to_astra(pinata_url: str):
+    start_time = time.perf_counter()
+    astra_token        = os.environ["ASTRA_DB_APPLICATION_TOKEN"]
+    astra_api_endpoint = os.environ["ASTRA_DB_API_ENDPOINT"]
+    collection_name    = "demo"
+    chunk_size         = int(os.getenv("CHUNK_SIZE", 100))
+    chunk_overlap      = int(os.getenv("CHUNK_OVERLAP", 20))
+    batch_size         = int(os.getenv("BATCH_SIZE", 20))
+
+    # Alter collection to deny indexing on text field (run-safe, can be called repeatedly)
+    client = DataAPIClient(astra_token)
+    db = client.get_database_by_api_endpoint(astra_api_endpoint)
+    db.get_collection("demo")
+    print("✅ Collection altered — text field non-indexed")
+
+    # Fetch PDF into memory
+    response = requests.get(pinata_url, stream=True)
+    response.raise_for_status()
+    pdf_buffer = io.BytesIO(response.content)
+
+    # Extract text
+    reader = PdfReader(pdf_buffer)
+    full_text = ""
+    for page in reader.pages:
+        text = page.extract_text()
+        if text and text.strip():
+            full_text += text.strip() + "\n"
+
+    print(f"Extracted {len(full_text.split())} words from {len(reader.pages)} pages.")
+
+    # Chunk with overlap
+    words = full_text.split()
+    chunks = []
+    start = 0
+    while start < len(words):
+        chunk = " ".join(words[start:start + chunk_size])
+        chunks.append(chunk)
+        start += chunk_size - chunk_overlap
+
+    print(f"Created {len(chunks)} chunks.")
+
+    # Build documents
+    documents = [
+        {
+        "_id": str(uuid.uuid4()),
+        "$vectorize": chunk,
+        "chunk_index": i,
+        "text": chunk,
+        "source_url": pinata_url,
+        }
+        for i, chunk in enumerate(chunks)
+    ]
+
+    # Upload to AstraDB in batches
+    collection = db.get_collection(collection_name)
+    for i in range(0, len(documents), batch_size):
+        collection.insert_many(documents[i:i + batch_size])
+        print(f"Inserted batch {i // batch_size + 1} ({len(documents[i:i + batch_size])} docs)")
+
+    print(f"✅ Uploaded {len(documents)} chunks successfully.")
+    total_time = time.perf_counter() - start_time
+    print(f"Total execution time: {total_time:.2f} seconds")
+    return documents
+'''

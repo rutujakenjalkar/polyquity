@@ -11,6 +11,14 @@ import io
 import uuid
 from pypdf import PdfReader
 from astrapy import DataAPIClient
+import os
+
+
+def get_pinata_url(cid):
+    # Retrieve the gateway from environment variables
+    # If not found, it defaults to the public gateway
+    gateway = os.getenv("PINATA_GATEWAY", "gateway.pinata.cloud")
+    return f"https://{gateway}/ipfs/{cid}"
 
 
 
